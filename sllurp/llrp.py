@@ -584,8 +584,10 @@ class LLRPClient (LineReceiver):
         if onCompletion:
             self._deferreds['ENABLE_ACCESSSPEC_RESPONSE'].append(onCompletion)
 
-    def startAccess (self, readWords=None, writeWords=None, target = None,
-            *args):
+    def startAccess (self, readWords=None, writeWords=None, target = None, writeContent=None, *args):
+        if writeContent:
+            logger.info('startAccess entered with writeContent {}' .format('%02x' % writeContent))
+
         m = Message_struct['AccessSpec']
         if not target:
             target = {
@@ -605,19 +607,22 @@ class LLRPClient (LineReceiver):
         }
 
         if readWords:
-            opSpecParam['MB'] = readWords['MB']
-            opSpecParam['WordPtr'] = readWords['WordPtr']
-            opSpecParam['WordCount'] = readWords['WordCount']
-            if 'OpSpecID' in readWords:
-                opSpecParam['OpSpecID'] = readWords['OpSpecID']
-
+            opSpecParam = {
+                'OpSpecID': 0,
+                'MB': 3,
+                'WordPtr': 0,
+                'WordCount': readWords,
+                'AccessPassword': 0,
+            }
         elif writeWords:
-            opSpecParam['MB'] = writeWords['MB']
-            opSpecParam['WordPtr'] = writeWords['WordPtr']
-            opSpecParam['WriteDataWordCount'] = writeWords['WriteDataWordCount']
-            opSpecParam['WriteData'] = writeWords['WriteData']
-            if 'OpSpecID' in writeWords:
-                opSpecParam['OpSpecID'] = writeWords['OpSpecID']
+            opSpecParam = {
+                'OpSpecID': 0,
+                'MB': 3,
+                'WordPtr': 0,
+                'AccessPassword': 0,
+                'WriteDataWordCount': writeWords,
+                'WriteData': chr(writeContent >> 8) + chr(writeContent & 0xff),
+            }
         else:
             raise LLRPError('startAccess requires readWords or writeWords.')
 
