@@ -2813,7 +2813,7 @@ class LLRPROSpec(dict):
                         },
                         'C1G2SingulationControl': {
                             'Session': 2,
-                            'TagPopulation': 4,
+                            'TagPopulation': 32,
                             'TagTransitTime': 0
                         }
                     }
