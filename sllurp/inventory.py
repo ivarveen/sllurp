@@ -33,7 +33,7 @@ def finish (_):
     stopTimeMeasurement()
     runTime = (endTime - startTime) if (endTime > startTime) else 0
 
-    logger.info('total # of tags seen: {:.0f} ({:.1f} tags/second)'.format(numTags, numTags/runTime))
+    logger.info('total # of tags seen: %d (%d tags/second)', numTags, (numTags/runTime))
     if reactor.running:
         reactor.stop()
 
@@ -45,7 +45,7 @@ def tagReportCallback (llrpMsg):
     global numTags
     tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
     if len(tags):
-        #logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+        #logger.info('saw tag(s): %s', pprint.pformat(tags))
         
         for tag in tags:
             try:
@@ -78,7 +78,7 @@ def tagReportCallback (llrpMsg):
                 if epc[0:6].lower() == "001122":
                     numTags += cnt
                 
-                logger.info('saw: {} \t {}'.format(epc, cnt))
+                logger.info('saw: %s \t %d', epc, cnt)
                 
                 continue
 
@@ -137,7 +137,7 @@ def init_logging ():
         fHandler.setFormatter(formatter)
         root.addHandler(fHandler)
 
-    logger.log(logLevel, 'log level: {}'.format(logging.getLevelName(logLevel)))
+    logger.log(logLevel, 'log level: %s', logging.getLevelName(logLevel))
 
 def main ():
     parse_args()
@@ -147,12 +147,12 @@ def main ():
     if args.modulation in Modulation_DefaultTari:
         t_suggested = Modulation_DefaultTari[args.modulation]
         if args.tari:
-            logger.warn('recommended Tari for {} is {}'.format(args.modulation,
-                        t_suggested))
+            logger.warn('recommended Tari for %s is %d', args.modulation,
+                    t_suggested)
         else:
             args.tari = t_suggested
-            logger.info('selected recommended Tari of {} for {}'.format(args.tari,
-                        args.modulation))
+            logger.info('selected recommended Tari of %d for %s', args.tari,
+                        args.modulation)
 
     enabled_antennas = map(lambda x: int(x.strip()), args.antennas.split(','))
 
