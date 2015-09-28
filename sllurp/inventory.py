@@ -45,12 +45,48 @@ def tagReportCallback (llrpMsg):
     global numTags
     tags = llrpMsg.msgdict['RO_ACCESS_REPORT']['TagReportData']
     if len(tags):
-        logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+        #logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+        
+        for tag in tags:
+            try:
+                epc = tag['EPC-96']
+                cnt = tag['TagSeenCount'][0]
+                #logger.info('saw: {} \t {}'.format(epc, cnt))
+
+                if epc[0:6].lower() == "001122":
+                    numTags += cnt
+
+                    #logger.info('sensor: {}; \t RN16: {}; \t ACK: {}'.format(epc[8:12],epc[13:14],epc[15:16],16))
+                    #logger.info('sensor: {}; \t ACK: {}; \t RN16: {}; \t cnt: {}'.format(
+                    #    int(epc[6:10],16),
+                    #    int(epc[11:14],16),
+                    #    int(epc[15:18],16),
+                    #    cnt))
+
+                    #logger.info('saw tag(s): {}'.format(pprint.pformat(tags)))
+                #else:
+                logger.info('saw: {} \t {}'.format(epc, cnt))
+
+                #if epc[2:6].lower() == "7aff" or epc[2:6].lower() == "ffff":
+                #    #logger.info('saw: {}'.format(epc[-2:]))
+                #    logger.info('saw: {} \t {}'.format(int(epc[-2:],16), cnt))
+                #    numTags += cnt
+            except:
+                epc = tag['EPCData']['EPC']
+                cnt = tag['TagSeenCount'][0]
+
+                if epc[0:6].lower() == "001122":
+                    numTags += cnt
+                
+                logger.info('saw: {} \t {}'.format(epc, cnt))
+                
+                continue
+
     else:
-        logger.info('no tags seen')
+        #logger.info('no tags seen')
         return
-    for tag in tags:
-        numTags += tag['TagSeenCount'][0]
+    #for tag in tags:
+    #    numTags += tag['TagSeenCount'][0]
 
 def parse_args ():
     global args
